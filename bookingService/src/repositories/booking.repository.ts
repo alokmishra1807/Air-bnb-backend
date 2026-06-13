@@ -5,7 +5,10 @@ import { CreateBookingDTO } from "../dto/booking.dto";
 import { Transaction } from "sequelize";
 
 
+
 export async function createBooking(bookingData:CreateBookingDTO) {
+
+   
 
     const booking = await Booking.create({
         UserId:bookingData.userId,
