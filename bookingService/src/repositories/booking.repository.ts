@@ -2,6 +2,7 @@
 import IdempotencyKey  from "../db/models/idempotencykey";
 import Booking from "../db/models/booking";
 import { CreateBookingDTO } from "../dto/booking.dto";
+import { Transaction } from "sequelize";
 
 
 export async function createBooking(bookingData:CreateBookingDTO) {
@@ -29,39 +30,47 @@ export async function createIdempotencyKey(key:string,bookingId:number){
     return idempotencykey;
 }
 
-export async function getIdempotencykey(key:string){
+export async function getIdempotencykeyWithLock(key:string,t?:Transaction){
 
     
-    console.log('key is',key);
+    
     const idempotencykey = await IdempotencyKey.findOne({
         where:{
             idemkey:key
-        }
+        },
+        transaction:t,
+        lock:t?.LOCK.UPDATE,
+        
     })
 
-    return idempotencykey;
+    return (idempotencykey);
 }
 
-export async function getBookingbyId(bookingId:number){
+export async function getBookingbyId(bookingId:number,t?:Transaction){
     const booking = await Booking.findOne({
         where:{
             id:bookingId,
-        }
+        },
+        transaction:t
         
     })
 
     return booking;
 }
 
-export async function confirmBooking(bookingId: number) {
-  const booking = await Booking.findByPk(bookingId);
+export async function confirmBooking(bookingId: number,t?:Transaction) {
+  const booking = await Booking.findByPk(bookingId,{
+    transaction:t
+  });
 
   if (!booking) {
     throw new Error("Booking not found");
   }
 
   booking.status = "CONFIRMED";
-  await booking.save();
+  await booking.save({
+    transaction:t
+  });
 
   return booking;
 }
@@ -79,11 +88,13 @@ export async function cancelBooking(bookingId:number){
   return booking;
 }
 
-export async function finalizeBooking(key:string){
+export async function finalizeBooking(key:string,t?:Transaction){
+    
    const idempotencyKey = await IdempotencyKey.findOne({
     where:{
         idemkey:key
-    }
+    },
+    transaction:t
    })
 
   if (!idempotencyKey) {
@@ -91,7 +102,7 @@ export async function finalizeBooking(key:string){
   }
 
   idempotencyKey.finalized = true;
-  await idempotencyKey.save();
+  await idempotencyKey.save({transaction:t});
 
   return idempotencyKey;
 }
