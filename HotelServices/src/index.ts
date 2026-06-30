@@ -13,6 +13,10 @@ import sequelize from './db/models/sequelize';
 
 app.use(express.json());
 
+/* app.get('/',(req : Request,res:Response)=>{
+    res.send("hello");
+}) */
+
 app.use(attachCorrelationMiddleware);
 app.use('/api/v1',v1Router);
 app.use('/api/v2',v2Router);

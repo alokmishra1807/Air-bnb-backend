@@ -27,6 +27,7 @@ export async function gethotelHandler(req:Request,res:Response,next:NextFunction
 }
 
 export async function getAllhotelHandler(req:Request,res:Response,next:NextFunction){
+    // console.log(req.headers);
    
     const hotelResponse = await getAllHotelService();
 

@@ -8,7 +8,7 @@ import { genericErrorHandler } from './middleware/error.middleware';
 import { attachCorrelationMiddleware } from './middleware/correlation.middleware';
 import sequelize from './db/models/sequelize'
 import logger from './config/logger.config';
-import { addEmailToQueue } from './producers/email.producer';
+// import { addEmailToQueue } from './producers/email.producer';
 
 
 app.use(express.json());
@@ -34,14 +34,14 @@ app.listen(serverConfig.PORT,async()=>{
     logger.error("Something went wrong");
    }
 
-    addEmailToQueue({
-            to: "shreyas199915@gmail.com",
-            subject: "Sample Email booking",
-            templateId: "welcome",
-            params: {
-                name: "John Doe",
-                orderId: "12345",
-            }
-        })
+    // addEmailToQueue({
+    //         to: "shreyas199915@gmail.com",
+    //         subject: "Sample Email booking",
+    //         templateId: "welcome",
+    //         params: {
+    //             name: "John Doe",
+    //             orderId: "12345",
+    //         }
+    //     })
 
 })

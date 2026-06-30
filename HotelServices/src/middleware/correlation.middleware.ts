@@ -6,7 +6,7 @@ import { asyncLocalStorage } from "../utils/helpers/request.helper";
 export const attachCorrelationMiddleware = async(req : Request, res: Response,next : NextFunction)=>{
 
     const correlationId = uuidv4();
-    console.log(correlationId);
+   // console.log(correlationId);
 
       req.headers['x-correlation-id'] = correlationId;
 
