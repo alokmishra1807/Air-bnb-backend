@@ -9,13 +9,14 @@ import { attachCorrelationMiddleware } from './middleware/correlation.middleware
 
 import logger from './config/logger.config';
 import sequelize from './db/models/sequelize';
+import { setUpRoomGenerationFunction } from './processor/roomGeneration.processor';
 
 
 app.use(express.json());
 
-/* app.get('/',(req : Request,res:Response)=>{
-    res.send("hello");
-}) */
+// app.get('/',(req : Request,res:Response)=>{
+//     res.send("hello");
+// }) 
 
 app.use(attachCorrelationMiddleware);
 app.use('/api/v1',v1Router);
@@ -28,6 +29,7 @@ app.use(genericErrorHandler);
 
 app.listen(serverConfig.PORT,async ()=>{
     console.log(`Listening to PORT ${serverConfig.PORT}`);
+    setUpRoomGenerationFunction();
     // logger.info(`press ctrl + C to stop the server`)
 
    try {
