@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hotelservice
+  namespace: hotel-service-ns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hotelservice
+  template:
+    metadata:
+      labels:
+        app: hotelservice
+    spec:
+      containers:
+        - name: hotelservice
+          image: alokmishra773/hotelservice:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: hotelservice-secrets
+                  key: DB_USERNAME
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: hotelservice-secrets
+                  key: DB_PASSWORD
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: hotelservice-secrets
+                  key: DB_NAME
+            - name: HOST_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: hotelservice-secrets
+                  key: HOST_NAME
+            - name: REDIS_SERVER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: hotelservice-secrets
+                  key: REDIS_SERVER_URL

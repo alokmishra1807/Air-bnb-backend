@@ -28,8 +28,9 @@ Jenkins
 ```
 
 ## 1. Jenkins Node
-
 The pipeline runs on a Jenkins node with the label:
+
+
 
 ```groovy
 agent { label "dev" }
