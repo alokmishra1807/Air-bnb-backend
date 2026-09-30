@@ -2,7 +2,7 @@ import {  Job, Worker } from "bullmq";
 import { RoomGenerationJob } from "../dto/roomGeneration.dto";
 import { ROOM_GENERATOR_QUEUE } from "../queue/roomGeneration.queue";
 import { ROOM_GENERATOR_PAYLOAD } from "../producers/roomGeneration.proccessor";
-import { getRedisConnObject } from "../config/redis.config";
+// import { getRedisConnObject } from "../config/redis.config";
 import logger from "../config/logger.config";
 import { generateRooms } from "../services/roomGeneration.service";
 
@@ -32,7 +32,11 @@ const emailProccessor = new Worker<RoomGenerationJob>(
 
     },
     {
-        connection: getRedisConnObject as any
+        connection: {
+            host: "redis",
+            port: 6379,
+            maxRetriesPerRequest: null
+        }
     }
 
 )

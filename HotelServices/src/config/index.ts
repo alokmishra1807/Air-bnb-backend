@@ -27,7 +27,7 @@ loadEnv();
 export const serverConfig: ServerConfig = {
     
     PORT: Number(process.env.PORT) || 3001,
-    REDIS_SERVER_URL:process.env.REDIS_SERVER_URL || "redis://localhost:6379"
+    REDIS_SERVER_URL:process.env.REDIS_SERVER_URL || 'redis://redis:6379'
 };
 
 
@@ -36,5 +36,5 @@ export const dbConfig: DBConfig = {
     DB_NAME: String(process.env.DB_NAME) || 'test-db',
     DB_PASSWORD:String(process.env.DB_PASSWORD) || 'root',
     DB_USERNAME:String(process.env.DB_USERNAME) || 'root',
-    HOST_NAME:String(process.env.HOST_NAME) || "localhost"
+    HOST_NAME:String(process.env.HOST_NAME) || "mysql"
 };

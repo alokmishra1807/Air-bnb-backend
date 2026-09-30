@@ -1,0 +1,102 @@
+pipeline {
+    agent { label "dev" }
+
+    stages {
+
+        stage('Clone Repo') {
+            steps {
+                git(
+                    url: "https://github.com/alokmishra1807/Air-bnb-backend.git",
+                    branch: "main"
+                )
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('HotelServices') {
+                    sh '''
+                        docker build -t hotelservice:latest .
+                    '''
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: "YOUR_DOCKERHUB_CREDENTIAL_ID",
+                        usernameVariable: "DOCKERHUB_USER",
+                        passwordVariable: "DOCKERHUB_PASS"
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKERHUB_PASS" | docker login \
+                            -u "$DOCKERHUB_USER" \
+                            --password-stdin
+
+                        docker tag hotelservice:latest \
+                            alokmishra773/hotelservice:latest
+
+                        docker push \
+                            alokmishra773/hotelservice:latest
+
+                        docker logout
+                    '''
+                }
+            }
+        }
+
+        stage('Prepare Environment') {
+            steps {
+                dir('HotelServices') {
+                    withCredentials([
+                        file(
+                            credentialsId: 'YOUR_ENV_FILE_CREDENTIAL_ID',
+                            variable: 'ENV_FILE'
+                        )
+                    ]) {
+                        sh '''
+                            rm -f .env
+                            cp "$ENV_FILE" .env
+                            chmod 600 .env
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                dir('HotelServices') {
+                    sh '''
+                        docker compose pull
+                        docker compose up -d
+                    '''
+                }
+            }
+        }
+
+        stage('Database Migration') {
+            steps {
+                dir('HotelServices') {
+                    sh '''
+                        docker compose exec -T app \
+                            npx sequelize-cli db:migrate
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'HotelService CI/CD pipeline completed successfully!'
+        }
+
+        failure {
+            echo 'HotelService CI/CD pipeline failed!'
+        }
+    }
+}
